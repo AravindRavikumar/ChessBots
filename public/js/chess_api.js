@@ -1,14 +1,23 @@
 var board,
     game = new Chess();
 
+
 /*The "AI" part starts here */
 
 var calculateBestMove =function(game) {
 
     var newGameMoves = game.moves();
 
-    return newGameMoves[Math.floor(Math.random() * newGameMoves.length)];
+    //to send board to backend
+    var ajax = new XMLHttpRequest();
+    ajax.open("POST","/curpos",true);
+    ajax.setRequestHeader('Content-Type', 'application/json;charset=UTF-8')
+    var data = {};
+    data.game = game.fen();
+    ajax.send(JSON.stringify(data));
 
+    //to recieve move to be played
+    return newGameMoves[Math.floor(Math.random() * newGameMoves.length)];
 };
 
 /* board visualization and games state handling starts here*/
