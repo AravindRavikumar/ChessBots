@@ -8,7 +8,7 @@ var calculateBestMove =function(game) {
 
     var newGameMoves = game.moves();
 
-    //to send board to backend
+    //ajax request to send board to backend
     var ajax = new XMLHttpRequest();
     ajax.open("POST","/curpos",true);
     ajax.setRequestHeader('Content-Type', 'application/json;charset=UTF-8')
