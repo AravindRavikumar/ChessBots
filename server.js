@@ -23,20 +23,23 @@ app.get('/bot1.html', function (req, res) {
 app.post('/curpos',function (req, res){
 	var boardFEN = req.body['game'];
 	//console.log(boardFEN);
+	var nextMove = "init";
 	var pythonProcess = spawn('C:/Users/Aravind Ravikumar/AppData/Local/Programs/Python/Python37/python.exe',["public/chess_engine/minmax.py",boardFEN]);		//Because path not detected in python script, use this if Windows
 
 	pythonProcess.stdout.on('data', function(data){
 		console.log(data.toString());
+		nextMove = data.toString();
 	 });
 
 	 pythonProcess.stderr.on('data', function(data){
 		console.log("Error in script");
 		console.log(data.toString());
 	 });
-
+	
+	res.send(JSON.stringify(nextMove));
 });
 
- var server = app.listen(8080, "127.0.0.1", function () {
+ var server = app.listen(3000, "127.0.0.1", function () {
 	var host = server.address().address;
 	var port = server.address().port;
  
