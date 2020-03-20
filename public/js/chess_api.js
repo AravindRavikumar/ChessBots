@@ -9,12 +9,21 @@ var calculateBestMove =function(game) {
     var newGameMoves = game.moves();
 
     //ajax request to send board to backend
-    var ajax = new XMLHttpRequest();
-    ajax.open("POST","/curpos",true);
-    ajax.setRequestHeader('Content-Type', 'application/json;charset=UTF-8')
     var data = {};
     data.game = game.fen();
-    ajax.send(JSON.stringify(data));
+
+    $.ajax({
+        url: "/curpos",
+        type: "POST",
+        data: JSON.stringify(data),
+        contentType: "application/json;charset=UTF-8",
+        success: function (data) {
+            console.log(data);
+        },
+        error: function(data){
+            console.log(data);
+        }
+    });
 
     //to recieve move to be played
     return newGameMoves[Math.floor(Math.random() * newGameMoves.length)];
