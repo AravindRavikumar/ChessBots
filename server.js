@@ -21,22 +21,52 @@ app.get('/bot1.html', function (req, res) {
 });
 
 app.post('/curpos',function (req, res){
-	var boardFEN = req.body['game'];
-	//console.log(boardFEN);
 	var nextMove = "init";
-	var pythonProcess = spawn('C:/Users/Aravind Ravikumar/AppData/Local/Programs/Python/Python37/python.exe',["public/chess_engine/minmax.py",boardFEN]);		//Because path not detected in python script, use this if Windows
 
-	pythonProcess.stdout.on('data', function(data){
-		console.log(data.toString());
-		nextMove = data.toString();
-	 });
+	async function spawnChild(){
+		var boardFEN = req.body['game'];
+		//console.log(boardFEN);
+		var pythonProcess = spawn('C:/Users/Aravind Ravikumar/AppData/Local/Programs/Python/Python37/python.exe',["public/chess_engine/minmax.py",boardFEN]);		//Because path not detected in python script, use this if Windows
+		
+		var data = "";
+		var error = "";
+		
+		/*
+		pythonProcess.stdout.on('data', function(data){
+			console.log(data.toString());
+			nextMoveData += data.toString();
+		});
+		pythonProcess.stderr.on('data', function(data){
+			console.log("Error in script");
+			console.log(data.toString());
+		});
+		*/
 
-	 pythonProcess.stderr.on('data', function(data){
-		console.log("Error in script");
-		console.log(data.toString());
-	 });
+		for await (const chunk of pythonProcess.stdout) {
+			data += chunk;
+		}
+
+		for await (const chunk of pythonProcess.stderr) {
+			error += chunk;
+		}
+
+		const exitCode = await new Promise( function(resolve, reject) {
+			pythonProcess.on('close', resolve);
+		});
 	
-	res.send(JSON.stringify(nextMove));
+		if(exitCode) {
+			throw new Error(`subprocess error exit ${exitCode}, ${error}`);
+		}
+
+		return data;
+	}
+
+	spawnChild().then( function(data,err){
+		console.log(data);
+		nextMove = data;
+		res.send(JSON.stringify(nextMove));
+	});
+	
 });
 
  var server = app.listen(3000, "127.0.0.1", function () {
