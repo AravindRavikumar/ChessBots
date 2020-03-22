@@ -1,32 +1,57 @@
 var board,
     game = new Chess();
 
-
 /*The "AI" part starts here */
 
-var calculateBestMove =function(game) {
+var calculateBestMove = function(game) {
 
     var newGameMoves = game.moves();
-
-    //ajax request to send board to backend
+    var nextMove = "";
     var data = {};
     data.game = game.fen();
 
-    $.ajax({
-        url: "/curpos",
-        type: "POST",
-        data: JSON.stringify(data),
-        contentType: "application/json;charset=UTF-8",
-        success: function (data) {
-            console.log(data);
-        },
-        error: function(data){
-            console.log(data);
-        }
+    var xhttpr = new XMLHttpRequest();
+    xhttpr.open("POST","/curpos", false);
+    xhttpr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+    xhttpr.onreadystatechange = function() {
+        if (xhttpr.readyState == 4) {
+            nextMove = xhttpr.responseText;
+            //console.log(nextMove);
+       }
+    };
+    xhttpr.send(JSON.stringify(data));
+    
+    /*
+    async function ajaxCall(){
+        //ajax request to send board to backend
+        var res = "";
+        await $.ajax({
+            url: "/curpos",
+            type: "POST",
+            data: JSON.stringify(data),
+            contentType: "application/json;charset=UTF-8",
+            success: function (data) {
+                res = data;
+                //console.log(res);
+            },
+            error: function(data){
+                console.log(data);
+            }
+        });
+        return res;
+    }
+
+    ajaxCall().then( function(data,err){
+		nextMove = data.substring(1,5);
+        console.log(nextMove);
+        return nextMove;
     });
+    */
 
     //to recieve move to be played
-    return newGameMoves[Math.floor(Math.random() * newGameMoves.length)];
+    console.log(nextMove.substring(1,5));
+    return nextMove.substring(1,5);
+    //return newGameMoves[Math.floor(Math.random() * newGameMoves.length)];
 };
 
 /* board visualization and games state handling starts here*/
@@ -40,7 +65,7 @@ var onDragStart = function (source, piece, position, orientation) {
 
 var makeBestMove = function () {
     var bestMove = getBestMove(game);
-    game.move(bestMove);
+    game.move(bestMove, {sloppy : true});
     board.position(game.fen());
     renderMoveHistory(game.history());
     if (game.game_over()) {

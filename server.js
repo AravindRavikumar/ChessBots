@@ -30,7 +30,7 @@ app.post('/curpos',function (req, res){
 		
 		var data = "";
 		var error = "";
-		
+
 		/*
 		pythonProcess.stdout.on('data', function(data){
 			console.log(data.toString());
@@ -63,7 +63,7 @@ app.post('/curpos',function (req, res){
 
 	spawnChild().then( function(data,err){
 		console.log(data);
-		nextMove = data;
+		nextMove = data.toString();
 		res.send(JSON.stringify(nextMove));
 	});
 	
