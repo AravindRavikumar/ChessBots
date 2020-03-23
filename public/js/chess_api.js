@@ -10,6 +10,7 @@ var calculateBestMove = function(game) {
     var data = {};
     data.game = game.fen();
 
+    //to recieve move to be played
     var xhttpr = new XMLHttpRequest();
     xhttpr.open("POST","/curpos", false);
     xhttpr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
@@ -47,8 +48,7 @@ var calculateBestMove = function(game) {
         return nextMove;
     });
     */
-
-    //to recieve move to be played
+    
     console.log(nextMove.substring(1,5));
     return nextMove.substring(1,5);
     //return newGameMoves[Math.floor(Math.random() * newGameMoves.length)];

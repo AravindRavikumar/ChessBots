@@ -26,7 +26,7 @@ app.post('/curpos',function (req, res){
 	async function spawnChild(){
 		var boardFEN = req.body['game'];
 		//console.log(boardFEN);
-		var pythonProcess = spawn('C:/Users/Aravind Ravikumar/AppData/Local/Programs/Python/Python37/python.exe',["public/chess_engine/minmax.py",boardFEN]);		//Because path not detected in python script, use this if Windows
+		var pythonProcess = spawn('C:/Users/Aravind Ravikumar/AppData/Local/Programs/Python/Python37/python.exe',["public/chess_engine/minimax.py",boardFEN]);		//Because path not detected in python script, use this if Windows
 		
 		var data = "";
 		var error = "";
@@ -66,7 +66,6 @@ app.post('/curpos',function (req, res){
 		nextMove = data.toString();
 		res.send(JSON.stringify(nextMove));
 	});
-	
 });
 
  var server = app.listen(3000, "127.0.0.1", function () {

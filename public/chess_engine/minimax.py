@@ -12,7 +12,10 @@ def minmaxBest(depth, board):
 		value = minmax(depth-1, board, True)
 		#print(value)
 		board.pop()
-		if(value<valBest):
+		if value == valBest:
+			if random.random()*100 < 20:
+				moveBest = moveItr
+		if value < valBest:
 			valBest = value
 			moveBest = moveItr
 	return moveBest
@@ -63,9 +66,12 @@ def getValue(piece):
 		return -9
 	elif piece == "Q":
 		return 9
+	elif piece == "k":
+		return -100
+	elif piece == "K":
+		return 100
 	else:
 		return 0
-
 
 boardPos = ""
 
