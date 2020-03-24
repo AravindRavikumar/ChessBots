@@ -1,98 +1,7 @@
 import sys
 import chess
 import random
-
-#check https://www.chessprogramming.org/Simplified_Evaluation_Function for position values
-bPawnPosValue = [0,  0,  0,  0,  0,  0,  0,  0,
-				50, 50, 50, 50, 50, 50, 50, 50,
-				10, 10, 20, 30, 30, 20, 10, 10,
-				5,  5, 10, 25, 25, 10,  5,  5,
-				0,  0,  0, 20, 20,  0,  0,  0,
-				5, -5,-10,  0,  0,-10, -5,  5,
-				5, 10, 10,-20,-20, 10, 10,  5,
-				0,  0,  0,  0,  0,  0,  0,  0]
-
-wPawnPosValue = [0,  0,  0,  0,  0,  0,  0,  0,
-				5, 10, 10,-20,-20, 10, 10,  5,
-				5, -5,-10,  0,  0,-10, -5,  5,
-				0,  0,  0, 20, 20,  0,  0,  0,
-				5,  5, 10, 25, 25, 10,  5,  5,
-				10, 10, 20, 30, 30, 20, 10, 10,
-				50, 50, 50, 50, 50, 50, 50, 50,
-				0,  0,  0,  0,  0,  0,  0,  0]
-
-bKnightPosValue = [-50,-40,-30,-30,-30,-30,-40,-50,
-				-40,-20,  0,  0,  0,  0,-20,-40,
-				-30,  5, 15, 20, 20, 15,  5,-30,
-				-30,  0, 15, 20, 20, 15,  0,-30,
-				-30,  5, 10, 15, 15, 10,  5,-30,
-				-30,  0, 10, 15, 15, 10,  0,-30,
-				-40,-20,  0,  5,  5,  0,-20,-40,
-				-50,-40,-30,-30,-30,-30,-40,-50]
-
-wKnightPosValue = [-50,-40,-30,-30,-30,-30,-40,-50,
-				-40,-20,  0,  5,  5,  0,-20,-40,
-				-30,  0, 10, 15, 15, 10,  0,-30,
-				-30,  5, 10, 15, 15, 10,  5,-30,
-				-30,  0, 15, 20, 20, 15,  0,-30,
-				-30,  5, 15, 20, 20, 15,  5,-30,
-				-40,-20,  0,  0,  0,  0,-20,-40,
-				-50,-40,-30,-30,-30,-30,-40,-50]
-
-bBishopPosValue = [-20,-10,-10,-10,-10,-10,-10,-20,
-				-10,  5,  0,  0,  0,  0,  5,-10,
-				-10, 10, 10, 10, 10, 10, 10,-10,
-				-10,  0, 10, 10, 10, 10,  0,-10,
-				-10,  5,  5, 10, 10,  5,  5,-10,
-				-10,  0,  5, 10, 10,  5,  0,-10,
-				-10,  0,  0,  0,  0,  0,  0,-10,
-				-20,-10,-10,-10,-10,-10,-10,-20]
-
-wBishopPosValue = [-20,-10,-10,-10,-10,-10,-10,-20,
-				-10,  0,  0,  0,  0,  0,  0,-10,
-				-10,  0,  5, 10, 10,  5,  0,-10,
-				-10,  5,  5, 10, 10,  5,  5,-10,
-				-10,  0, 10, 10, 10, 10,  0,-10,
-				-10, 10, 10, 10, 10, 10, 10,-10,
-				-10,  5,  0,  0,  0,  0,  5,-10,
-				-20,-10,-10,-10,-10,-10,-10,-20]
-
-bRookPosValue = [ 0,  0,  0,  0,  0,  0,  0,  0,
-				5, 10, 10, 10, 10, 10, 10,  5,
-				-5,  0,  0,  0,  0,  0,  0, -5,
-				-5,  0,  0,  0,  0,  0,  0, -5,
-				-5,  0,  0,  0,  0,  0,  0, -5,
-				-5,  0,  0,  0,  0,  0,  0, -5,
-				-5,  0,  0,  0,  0,  0,  0, -5,
-				0,  0,  0,  5,  5,  0,  0,  0]
-
-wRookPosValue = [0,  0,  0,  5,  5,  0,  0,  0,
-				-5,  0,  0,  0,  0,  0,  0, -5,
-				-5,  0,  0,  0,  0,  0,  0, -5,
-				-5,  0,  0,  0,  0,  0,  0, -5,
-				-5,  0,  0,  0,  0,  0,  0, -5,
-				-5,  0,  0,  0,  0,  0,  0, -5,
-				5, 10, 10, 10, 10, 10, 10,  5,
-				0,  0,  0,  0,  0,  0,  0,  0]
-
-bQueenPosValue = [-20,-10,-10, -5, -5,-10,-10,-20,
-			-10,  0,  0,  0,  0,  0,  0,-10,
-			-10,  0,  5,  5,  5,  5,  0,-10,
-			-5,  0,  5,  5,  5,  5,  0, -5,
-			0,  0,  5,  5,  5,  5,  0, -5,
-			-10,  5,  5,  5,  5,  5,  0,-10,
-			-10,  0,  5,  0,  0,  0,  0,-10,
-			-20,-10,-10, -5, -5,-10,-10,-20]
-
-wQueenPosValue = [-20,-10,-10, -5, -5,-10,-10,-20,
-				-10,  0,  5,  0,  0,  0,  0,-10,
-				-10,  5,  5,  5,  5,  5,  0,-10,
-				0,  0,  5,  5,  5,  5,  0, -5,
-				-5,  0,  5,  5,  5,  5,  0, -5,
-				-10,  0,  5,  5,  5,  5,  0,-10,
-				-10,  0,  0,  0,  0,  0,  0,-10,
-				-10,  0,  0,  0,  0,  0,  0,-10,
-				-20,-10,-10, -5, -5,-10,-10,-20]
+import positionValue
 
 def minmaxBest(depth, board):
 	moveList = board.legal_moves
@@ -136,30 +45,9 @@ def evaluate(board):
 	boardEval = 0
 	for i in range(0,64):
 		#print(i,end=" ")
-		boardEval += getValue(str(board.piece_at(i))) + posFactor(str(board.piece_at(i)),i)
+		boardEval += getValue(str(board.piece_at(i))) + positionValue.posFactor(str(board.piece_at(i)),i)
 		#print(board.piece_at(i))
 	return boardEval
-
-def posFactor(piece,pos):
-	return 0
-	if piece == "p":
-		return -bPawnPosValue[pos]
-	elif piece == "P":
-		return wPawnPosValue[pos]
-	elif piece == "n":
-		return -bKnightPosValue[pos]
-	elif piece == "N":
-		return wKnightPosValue[pos]
-	elif piece == "b":
-		return -bBishopPosValue[pos]
-	elif piece == "B":
-		return wBishopPosValue[pos]
-	elif piece == "q":
-		return -bQueenPosValue[pos]
-	elif piece == "Q":
-		return wQueenPosValue[pos]
-	else:
-		return 0
 
 def getValue(piece): 		#check-out https://www.chessprogramming.org/Simplified_Evaluation_Function
 	if piece == None:
