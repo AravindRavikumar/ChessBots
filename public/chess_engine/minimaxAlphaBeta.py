@@ -5,12 +5,12 @@ import positionValue
 
 def minimaxBest(depth, board):
 	moveList = board.legal_moves
-	valBest = 10000
+	valBest = 100000
 	moveBest = ""
 	for moveItr in moveList:
 		board.push(moveItr)
 		#print(moveItr,end=" ")
-		value = minimax(depth-1, board, True)
+		value = minimax(depth-1, board, -100000, 100000, True)
 		#print(value)
 		board.pop()
 		if value == valBest:
@@ -21,24 +21,30 @@ def minimaxBest(depth, board):
 			moveBest = moveItr
 	return moveBest
 
-def minimax(depth, board, isMax):
+def minimax(depth, board, alpha, beta, isMax):
 	if depth == 0:
 		return evaluate(board)
 	else:
 		moveList = board.legal_moves
 		if isMax:
-			value = -10000
+			value = -100000
 			for moveItr in moveList:
 				board.push(moveItr)
-				value = max(value, minimax(depth-1, board, False))
+				value = max(value, minimax(depth-1, board, alpha, beta, False))
 				board.pop()
+				alpha = max(alpha, value)
+				if beta <= alpha:
+					return value
 			return value
 		else:
-			value = 10000
+			value = 100000
 			for moveItr in moveList:
 				board.push(moveItr)
-				value = min(value, minimax(depth-1, board, True))
+				value = min(value, minimax(depth-1, board, alpha, beta, True))
 				board.pop()
+				beta = min(beta, value)
+				if beta <= alpha:
+					return value
 			return value
     			
 def evaluate(board):
