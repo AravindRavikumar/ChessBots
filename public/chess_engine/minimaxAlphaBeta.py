@@ -69,7 +69,7 @@ def getValue(piece): 		#check-out https://www.chessprogramming.org/Simplified_Ev
 	elif piece == "b":
 		return -330	
 	elif piece == "B":
-		return -330		
+		return 330		
 	elif piece == "r":
 		return -500
 	elif piece == "R":
